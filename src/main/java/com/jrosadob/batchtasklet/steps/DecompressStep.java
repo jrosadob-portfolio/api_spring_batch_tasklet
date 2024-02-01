@@ -31,7 +31,11 @@ public class DecompressStep implements Tasklet {
         Resource resource = resourceLoader.getResource("file:src/main/resources/zip/persons.zip");
         String filePath = resource.getFile().getAbsolutePath();
         ZipFile zipFile = new ZipFile(filePath);
-        File targetDir = new File(resource.getFile().getParent(), "target");
+
+        File parentDir = resource.getFile().getParentFile().getParentFile();
+        File targetDir = new File(parentDir, "target");
+
+        //File targetDir = new File(resource.getFile().getParent(), "target");
         
         if (!targetDir.exists()) {
             targetDir.mkdirs();

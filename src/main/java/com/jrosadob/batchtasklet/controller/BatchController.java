@@ -14,6 +14,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ public class BatchController {
     }
 
     @PostMapping("/uploadFile")
-    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile){
+    public ResponseEntity<Void> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile){
         String fileName = multipartFile.getOriginalFilename();
         try{
             Path path = Paths.get("src" + File.separator + "main" + File.separator + "resources" + File.separator + "files" + File.separator + fileName);
@@ -52,15 +53,20 @@ public class BatchController {
 
             jobLauncher.run(job, jobParameters);
 
-            Map<String, String> response = new HashMap<>();
-            response.put("archivo", fileName);
+            // Map<String, String> response = new HashMap<>();
+            // response.put("archivo", fileName);
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.noContent().build();
 
         }catch(Exception exception){
             log.error("Error al iniciar el proceso batch. Error {}", exception.getMessage());
             throw new RuntimeException();
         }
     }
-}
 
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Service is up and running");
+    }
+
+}
